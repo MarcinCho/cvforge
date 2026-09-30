@@ -63,7 +63,11 @@ def read_offer(source: str) -> str:
         r.raise_for_status()
         return html_to_text(r.text) if "html" in r.headers.get("content-type", "html") else r.text
     p = Path(source)
-    if len(source) < 400 and p.exists():
+    try:
+        is_file = len(source) < 400 and p.is_file()
+    except OSError:  # e.g. pasted offer text longer than the OS filename limit (Python < 3.14 raises here)
+        is_file = False
+    if is_file:
         text = p.read_text(encoding="utf-8")
         return html_to_text(text) if p.suffix.lower() in (".html", ".htm") else text
     return source
