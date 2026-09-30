@@ -4,6 +4,8 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    # pyproject.toml lists minimum versions; only raise them when a new release is outside the range.
+    versioning-strategy: increase-if-necessary
   - package-ecosystem: github-actions
     directory: /
     schedule:
