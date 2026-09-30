@@ -1,0 +1,13 @@
+@page { size: A4; margin: 14mm 16mm 14mm 16mm; }
+:root { --font: "Noto Sans", sans-serif; --mono: "Noto Sans Mono", monospace; --size: 9.6pt; --name-size: 22pt;
+        --h2-size: 10.2pt; --text: #111827; --muted: #4b5563; --accent: #0e7c66; --section-gap: 4.4mm; }
+h1.name { letter-spacing: -0.01em; }
+.headline { font-family: var(--mono); font-weight: 400; color: var(--accent); font-size: calc(var(--size) * 1.1 * var(--k)); }
+h2 { font-family: var(--mono); text-transform: none; letter-spacing: 0; font-weight: 700;
+     border-bottom: 0.8pt dashed #9ca3af; color: var(--accent); }
+.dates { font-family: var(--mono); font-weight: 400; font-size: calc(var(--size) * 0.92 * var(--k)); }
+.company { color: var(--accent); }
+.tags { margin-bottom: 1.4mm; line-height: 1.9; }
+.tag { display: inline-block; font-size: calc(var(--size) * 0.92 * var(--k)); padding: 0 1.8mm; line-height: 1.5;
+       border: 0.6pt solid #a7d8cc; background: #ecf8f4; border-radius: 1mm; }
+li::marker { color: var(--accent); }

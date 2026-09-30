@@ -1,0 +1,16 @@
+name = "ats-modern"
+description = "Single column with a navy accent colour, lighter typography and skills near the top. Still fully ATS-parseable."
+ats_safe = true
+max_pages = 2
+sections = ["summary", "skills", "experience", "projects", "education", "certifications", "languages"]
+fonts = ["Lato"]
+
+[docx]
+font = "Calibri"
+body_size = 10.5
+name_size = 22
+heading_size = 12
+accent = "1F4E79"
+muted = "555555"
+margins_cm = 1.7
+heading_rule = true

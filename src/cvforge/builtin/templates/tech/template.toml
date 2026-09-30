@@ -1,0 +1,17 @@
+name = "tech"
+description = "Developer / engineering look: monospace headings and dates, skills shown as tags first. Fully ATS-parseable."
+ats_safe = true
+max_pages = 2
+skill_tags = true
+sections = ["summary", "skills", "experience", "projects", "education", "certifications", "languages"]
+fonts = ["NotoSans", "NotoSansMono"]
+
+[docx]
+font = "Calibri"
+body_size = 10.5
+name_size = 20
+heading_size = 11.5
+accent = "0E7C66"
+muted = "4B5563"
+margins_cm = 1.7
+heading_rule = true

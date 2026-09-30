@@ -1,0 +1,7 @@
+name: narrative
+description: Warmer, story-like professional tone that shows motivation and growth; still ATS-safe.
+instructions: |
+  - Summary tells a short career arc (where the candidate comes from, what they do now, where they are heading) in first-person-implied style (no "I").
+  - Bullets are complete, flowing phrases that explain context → action → result.
+  - Emphasise ownership, collaboration, learning and cross-cultural/multilingual work where the source supports it.
+  - Keep it professional; no clichés.

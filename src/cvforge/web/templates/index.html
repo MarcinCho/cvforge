@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>cvforge</title>
+<style>
+:root {
+  --bg: #f5f5f2; --panel: #ffffff; --ink: #1b1d21; --muted: #676b73; --line: #e2e2dc;
+  --accent: #1f4e79; --accent-soft: #e6eef6; --good: #1d7a46; --good-soft: #e3f3ea;
+  --warn: #9a6200; --warn-soft: #fbf0dc; --bad: #b3261e; --bad-soft: #fbe6e4;
+  --radius: 10px; --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #15171a; --panel: #1d2024; --ink: #e8e8e3; --muted: #9a9ea6; --line: #30343a;
+    --accent: #8cb8e3; --accent-soft: #1f2d3b; --good: #6fcf97; --good-soft: #17301f;
+    --warn: #e9b35f; --warn-soft: #34290f; --bad: #f28b82; --bad-soft: #3a1c1a;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+header { display: flex; align-items: baseline; gap: 14px; padding: 18px 24px; border-bottom: 1px solid var(--line); }
+header h1 { margin: 0; font-size: 20px; letter-spacing: -0.01em; }
+header span { color: var(--muted); font-size: 13px; }
+main { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 20px; padding: 20px 24px 60px; max-width: 1400px; margin: 0 auto; }
+aside h2, .panel h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 0 0 10px; }
+aside ul { list-style: none; margin: 0; padding: 0; }
+aside li button { width: 100%; text-align: left; background: none; border: 0; border-radius: 8px; padding: 8px 10px; color: var(--ink); cursor: pointer; font: inherit; }
+aside li button:hover, aside li button.active { background: var(--panel); }
+aside li small { display: block; color: var(--muted); font-size: 12px; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; margin-bottom: 18px; }
+label { display: block; font-size: 13px; color: var(--muted); margin: 0 0 4px; }
+select, textarea, input[type=text] { width: 100%; font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+textarea { min-height: 170px; resize: vertical; font-size: 14px; }
+.row { display: flex; gap: 12px; flex-wrap: wrap; align-items: end; }
+.row > div { flex: 1; min-width: 140px; }
+button.primary { background: var(--accent); color: var(--panel); border: 0; border-radius: 8px; padding: 9px 18px; font: 600 14px system-ui, sans-serif; cursor: pointer; }
+button.primary:disabled { opacity: 0.55; cursor: progress; }
+button.ghost { background: none; border: 1px solid var(--line); color: var(--ink); border-radius: 8px; padding: 7px 14px; cursor: pointer; font: inherit; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; font-size: 13px; cursor: pointer; user-select: none; }
+.chip input { accent-color: var(--accent); margin: 0; }
+.chip:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+.tpl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.tpl { display: block; border: 1px solid var(--line); border-radius: 10px; padding: 8px; cursor: pointer; background: var(--bg); }
+.tpl:has(input:checked) { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); background: var(--accent-soft); }
+.tpl img { width: 100%; aspect-ratio: 210 / 297; object-fit: cover; object-position: top; border-radius: 4px; background: #fff; border: 1px solid var(--line); }
+.tpl-head { display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 13px; font-weight: 600; }
+.tpl-head input { accent-color: var(--accent); margin: 0; }
+.tpl p { margin: 3px 0 0; font-size: 11.5px; color: var(--muted); line-height: 1.35; }
+.tpl .badge { font-size: 10px; padding: 1px 6px; margin-left: auto; }
+.kw { border-radius: 999px; padding: 2px 10px; font-size: 12.5px; }
+.kw.hit { background: var(--good-soft); color: var(--good); }
+.kw.miss { background: var(--bg); color: var(--muted); border: 1px dashed var(--line); }
+.kw.unc { background: var(--warn-soft); color: var(--warn); }
+.score { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 22px; align-items: center; }
+.ring { width: 140px; height: 140px; }
+.ring text { font: 700 34px system-ui, sans-serif; fill: var(--ink); }
+.ring .sub { font: 12px system-ui, sans-serif; fill: var(--muted); }
+.bars { display: grid; grid-template-columns: 110px minmax(0, 1fr) 36px; gap: 6px 10px; align-items: center; font-size: 13px; }
+.bar { height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--accent); border-radius: 4px; }
+.badge { display: inline-block; font: 600 12px system-ui, sans-serif; padding: 3px 10px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.04em; }
+.badge.pass, .badge.apply { background: var(--good-soft); color: var(--good); }
+.badge.warn, .badge.apply_with_notes, .badge.stretch { background: var(--warn-soft); color: var(--warn); }
+.badge.fail, .badge.skip { background: var(--bad-soft); color: var(--bad); }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+ul.plain { margin: 6px 0 0; padding-left: 18px; }
+ul.plain li { margin-bottom: 3px; }
+.variant { border-top: 1px solid var(--line); padding-top: 16px; margin-top: 16px; }
+.variant:first-child { border-top: 0; margin-top: 0; padding-top: 0; }
+.variant-head { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+.variant-head strong { font-size: 15px; }
+.variant-head a { color: var(--accent); font-weight: 600; font-size: 14px; }
+.previews { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 6px; }
+.previews img { height: 420px; border: 1px solid var(--line); border-radius: 6px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+details { margin-top: 8px; font-size: 13px; }
+details summary { cursor: pointer; color: var(--muted); }
+.check { display: grid; grid-template-columns: 18px 150px minmax(0, 1fr); gap: 4px 8px; padding: 2px 0; }
+.check .s-pass { color: var(--good); } .check .s-warn { color: var(--warn); } .check .s-fail { color: var(--bad); }
+.status { font-size: 13px; color: var(--muted); margin-left: 10px; }
+.error { background: var(--bad-soft); color: var(--bad); border-radius: 8px; padding: 10px 12px; margin-top: 12px; white-space: pre-wrap; font-size: 13px; }
+.hidden { display: none !important; }
+.muted { color: var(--muted); }
+.hint { font-size: 12.5px; color: var(--muted); margin-top: 6px; }
+header nav { margin-left: auto; display: flex; gap: 4px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 3px; }
+header nav button { border: 0; background: none; color: var(--muted); font: 600 13px system-ui, sans-serif; padding: 6px 14px; border-radius: 7px; cursor: pointer; }
+header nav button.active { background: var(--accent); color: var(--panel); }
+.steps { list-style: none; padding: 0; margin: 0; counter-reset: s; }
+.steps li { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 8px; font-size: 14px; }
+.steps li a { color: var(--ink); text-decoration: none; flex: 1; }
+.steps li:hover { background: var(--panel); }
+.dot { width: 9px; height: 9px; border-radius: 50%; background: var(--line); flex: none; }
+.dot.ok { background: var(--good); } .dot.todo { background: var(--warn); }
+.welcome { border-color: var(--accent); background: var(--accent-soft); }
+.welcome p { margin: 6px 0 0; }
+.preset-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; margin-top: 10px; }
+.preset { text-align: left; border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 10px; padding: 10px 12px; cursor: pointer; font: inherit; }
+.preset strong { display: block; font-size: 14px; }
+.preset small { font-size: 12px; color: var(--muted); }
+.preset small.found { color: var(--good); }
+.preset.active { border-color: var(--accent); background: var(--accent-soft); box-shadow: 0 0 0 2px var(--accent-soft); }
+.fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 12px; }
+.result { border-radius: 8px; padding: 10px 12px; margin-top: 12px; font-size: 13px; white-space: pre-wrap; }
+.result { background: var(--bg); color: var(--muted); }
+.result.ok { background: var(--good-soft); color: var(--good); }
+.result.bad { background: var(--bad-soft); color: var(--bad); }
+textarea.sot { min-height: 420px; font: 13px/1.5 var(--mono); margin-top: 12px; }
+.ghost-btn { display: inline-block; border: 1px solid var(--line); color: var(--ink); border-radius: 8px; padding: 7px 14px; cursor: pointer; font-size: 14px; margin: 0; white-space: nowrap; }
+.summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-top: 12px; }
+.stat { background: var(--bg); border-radius: 8px; padding: 10px 12px; }
+.stat b { display: block; font-size: 22px; }
+@media (max-width: 860px) {
+  header { flex-wrap: wrap; }
+  main { grid-template-columns: 1fr; padding: 16px; }
+  .score, .two { grid-template-columns: 1fr; }
+  .previews img { height: 320px; }
+}
+</style>
+</head>
+<body>
+<header><h1>cvforge</h1><span>ATS-optimised CVs tailored to each job offer, from your source of truth</span>
+  <nav><button class="active" data-view="create">Create CV</button><button data-view="setup" id="tab-setup">Setup</button></nav>
+</header>
+<main id="view-create">
+  <aside>
+    <h2>Candidate</h2>
+    <select id="candidate"></select>
+    <h2 style="margin-top:22px">Applications</h2>
+    <ul id="apps"><li class="muted" style="font-size:13px">none yet</li></ul>
+  </aside>
+
+  <section>
+    <div class="panel">
+      <h2>1 · Job offer</h2>
+      <label for="offer">Paste the job offer text or a URL</label>
+      <textarea id="offer" placeholder="https://… or the full offer text"></textarea>
+      <div class="row" style="margin-top:12px">
+        <div style="max-width:220px">
+          <label for="lang">CV language</label>
+          <select id="lang">
+            <option value="">Same as the offer</option>
+            <option value="pl">Polish</option><option value="en">English</option><option value="de">German</option>
+            <option value="no">Norwegian</option><option value="sv">Swedish</option><option value="da">Danish</option>
+            <option value="cs">Czech</option>
+          </select>
+        </div>
+        <div style="flex:0">
+          <button class="primary" id="btn-score">Analyse &amp; score</button>
+        </div>
+        <div><span class="status" id="status-score"></span></div>
+      </div>
+      <div id="err-score" class="error hidden"></div>
+    </div>
+
+    <div class="panel hidden" id="score-panel"></div>
+
+    <div class="panel hidden" id="gen-panel">
+      <h2>2 · Generate CV</h2>
+      <label>Writing style (pick one or more for variants)</label>
+      <div class="chips" id="styles"></div>
+      <label style="margin-top:14px">Template</label>
+      <div class="tpl-grid" id="templates"></div>
+      <div class="row" style="margin-top:14px">
+        <label class="chip" title="Condensed writing; if it still doesn't fit, the least important items are dropped one by one"><input type="checkbox" id="one-page"> One page</label>
+        <label class="chip hidden" id="visual-wrap"><input type="checkbox" id="visual"> LLM visual review</label>
+        <div style="flex:0"><button class="primary" id="btn-gen">Generate CV</button></div>
+        <div><span class="status" id="status-gen"></span></div>
+      </div>
+      <p class="hint">Re-generating with another template re-uses the already written CV text; a new style asks the LLM again.</p>
+      <div id="err-gen" class="error hidden"></div>
+    </div>
+
+    <div class="panel hidden" id="variants-panel"><h2>3 · Your CVs</h2><div id="variants"></div></div>
+
+    <div class="panel hidden" id="insights-panel">
+      <div class="row" style="justify-content:space-between;align-items:center">
+        <h2 style="margin:0">4 · Similar positions &amp; tips</h2>
+        <div style="flex:0"><button class="ghost" id="btn-ins">Generate insights</button></div>
+      </div>
+      <span class="status" id="status-ins"></span>
+      <div id="err-ins" class="error hidden"></div>
+      <div id="insights"></div>
+    </div>
+  </section>
+</main>
+
+<main id="view-setup" class="hidden">
+  <aside>
+    <h2>Setup</h2>
+    <ol class="steps">
+      <li><span class="dot" id="dot-llm"></span><a href="#s-llm">1 · AI model</a></li>
+      <li><span class="dot" id="dot-cand"></span><a href="#s-cand">2 · Career data</a></li>
+      <li><span class="dot ok"></span><a href="#s-def">3 · Defaults</a></li>
+    </ol>
+    <p class="hint" id="cfg-path" style="margin-top:16px;word-break:break-all"></p>
+  </aside>
+  <section>
+    <div class="panel welcome hidden" id="welcome">
+      <strong>Welcome to cvforge 👋</strong>
+      <p>Three quick steps: connect an AI model you already have, paste your career data, pick your defaults. Then switch to <b>Create CV</b> and paste a job offer.</p>
+    </div>
+
+    <div class="panel" id="s-llm">
+      <h2>1 · AI model</h2>
+      <p class="hint" style="margin-top:0">cvforge doesn't include an AI — it uses one you already have. Tools found on this computer are marked <span style="color:var(--good)">● found</span>.</p>
+      <div class="preset-grid" id="presets"></div>
+      <p class="hint" id="preset-hint"></p>
+      <div class="fields" id="llm-fields"></div>
+      <div class="row" style="margin-top:14px">
+        <div style="flex:0"><button class="ghost" id="btn-test">Test connection</button></div>
+        <div style="flex:0"><button class="primary" id="btn-save-llm">Save</button></div>
+        <div><span class="status" id="status-llm"></span></div>
+      </div>
+      <div id="err-llm" class="error hidden"></div>
+      <div id="llm-result"></div>
+    </div>
+
+    <div class="panel" id="s-cand">
+      <h2>2 · Your career data (source of truth)</h2>
+      <p class="hint" style="margin-top:0">Write everything about your career once — jobs, achievements <b>with numbers</b>, skills, education, languages. Any language is fine. cvforge picks what fits each job and never invents facts. Private notes go in <code>&lt;!-- comments --&gt;</code>; names that must never appear go in the <code>## cvforge rules</code> section.</p>
+      <div class="row">
+        <div><label for="sot-cand">Candidate</label><select id="sot-cand"></select></div>
+        <div><label for="new-cand">…or add a new person</label><input type="text" id="new-cand" placeholder="e.g. anna (lowercase, no spaces)"></div>
+        <div style="flex:0"><button class="ghost" id="btn-new-cand">Add</button></div>
+      </div>
+      <textarea id="sot" class="sot" spellcheck="false" placeholder="Add a candidate first"></textarea>
+      <div class="row" style="margin-top:10px">
+        <div style="flex:0"><label class="ghost-btn">Upload .md / .txt<input type="file" id="sot-file" accept=".md,.txt,.markdown,text/plain,text/markdown" hidden></label></div>
+        <div style="flex:0"><button class="primary" id="btn-save-sot">Save</button></div>
+        <div style="flex:0"><button class="ghost" id="btn-ingest">Save &amp; analyse</button></div>
+        <div><span class="status" id="status-sot"></span></div>
+      </div>
+      <div id="err-sot" class="error hidden"></div>
+      <div id="ingest-result"></div>
+    </div>
+
+    <div class="panel" id="s-def">
+      <h2>3 · Defaults</h2>
+      <div class="row">
+        <div><label for="def-style">Default writing style</label><select id="def-style"></select></div>
+        <div><label for="def-tpl">Default template</label><select id="def-tpl"></select></div>
+        <div style="flex:0"><button class="primary" id="btn-save-def">Save</button></div>
+        <div><span class="status" id="status-def"></span></div>
+      </div>
+      <div id="err-def" class="error hidden"></div>
+      <div style="margin-top:16px"><button class="primary" id="btn-go-create">Done → create a CV</button></div>
+    </div>
+  </section>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let META = null, APP = null;
+
+function token() { try { return localStorage.getItem("cvforge-token") || ""; } catch { return ""; } }
+async function api(path, body, method) {
+  const opts = { method: method || (body ? "POST" : "GET"), headers: { "Content-Type": "application/json" } };
+  if (token()) opts.headers.Authorization = "Bearer " + token();
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(path, opts);
+  if (r.status === 401) {
+    const t = prompt("API token (CVFORGE_TOKEN):");
+    if (t) { try { localStorage.setItem("cvforge-token", t); } catch {} return api(path, body, method); }
+  }
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(data.detail ? (typeof data.detail === "string" ? data.detail : JSON.stringify(data.detail, null, 1)) : r.statusText);
+  return data;
+}
+function fileUrl(name) {
+  const t = token() ? "?token=" + encodeURIComponent(token()) : "";
+  return `/files/${encodeURIComponent(APP.candidate)}/${encodeURIComponent(APP.application)}/${name}${t}`;
+}
+async function busy(btn, statusEl, errEl, label, fn) {
+  btn.disabled = true; errEl.classList.add("hidden");
+  const t0 = Date.now();
+  const tick = setInterval(() => statusEl.textContent = `${label}… ${Math.round((Date.now()-t0)/1000)}s`, 500);
+  try { await fn(); statusEl.textContent = `done in ${Math.round((Date.now()-t0)/1000)}s`; }
+  catch (e) { errEl.textContent = e.message; errEl.classList.remove("hidden"); statusEl.textContent = ""; }
+  finally { clearInterval(tick); btn.disabled = false; }
+}
+
+async function init() {
+  META = await api("/api/meta");
+  $("candidate").innerHTML = META.candidates.map(c => `<option ${c === META.default_candidate ? "selected" : ""}>${esc(c)}</option>`).join("")
+    || "<option value=''>no candidates yet — open Setup</option>";
+  $("styles").innerHTML = META.styles.map(s =>
+    `<label class="chip" title="${esc(s.description)}"><input type="checkbox" name="style" value="${esc(s.name)}" ${s.name === META.default_style ? "checked" : ""}>${esc(s.name)}</label>`).join("");
+  const tq = token() ? "?token=" + encodeURIComponent(token()) : "";
+  $("templates").innerHTML = META.templates.map(t => `
+    <label class="tpl" title="${esc(t.description)}">
+      <img loading="lazy" src="/api/templates/${encodeURIComponent(t.name)}/preview.png${tq}" alt="${esc(t.name)} template preview">
+      <span class="tpl-head"><input type="checkbox" name="tpl" value="${esc(t.name)}" ${t.name === META.default_template ? "checked" : ""}>${esc(t.name)}
+        <span class="badge ${t.ats_safe ? "pass" : "warn"}">${t.ats_safe ? "ATS" : "design"}</span></span>
+      <p>${esc(t.description)} · ≤${t.max_pages} page(s)</p>
+    </label>`).join("");
+  if (META.vision) $("visual-wrap").classList.remove("hidden");
+  $("candidate").onchange = loadApps;
+  loadApps();
+}
+
+async function loadApps() {
+  const c = $("candidate").value; if (!c) return;
+  const apps = await api(`/api/applications/${encodeURIComponent(c)}`);
+  $("apps").innerHTML = apps.length ? apps.map(a =>
+    `<li><button data-id="${esc(a.id)}" class="${APP && APP.application === a.id ? "active" : ""}">${esc(a.title)}<small>${esc(a.company || "")} · score ${a.score ?? "-"} · ${a.variants} CV</small></button></li>`).join("")
+    : `<li class="muted" style="font-size:13px">none yet</li>`;
+  $("apps").querySelectorAll("button").forEach(b => b.onclick = async () => {
+    show(await api(`/api/applications/${encodeURIComponent(c)}/${encodeURIComponent(b.dataset.id)}`));
+  });
+}
+
+function ring(v) {
+  const r = 58, c = 2 * Math.PI * r, color = v >= 75 ? "var(--good)" : v >= 55 ? "var(--warn)" : "var(--bad)";
+  return `<svg class="ring" viewBox="0 0 140 140" role="img" aria-label="Job fit ${v} of 100">
+    <circle cx="70" cy="70" r="${r}" fill="none" stroke="var(--line)" stroke-width="10"/>
+    <circle cx="70" cy="70" r="${r}" fill="none" stroke="${color}" stroke-width="10" stroke-linecap="round"
+      stroke-dasharray="${c * v / 100} ${c}" transform="rotate(-90 70 70)"/>
+    <text x="70" y="76" text-anchor="middle">${v}</text><text class="sub" x="70" y="96" text-anchor="middle">job fit</text></svg>`;
+}
+
+function show(app) {
+  APP = app;
+  const s = app.score, j = app.job;
+  if (s) {
+    const unc = new Set(s.unconfirmed_matches);
+    $("score-panel").innerHTML = `
+      <h2>${esc(j.title)}${j.company ? " · " + esc(j.company) : ""} <span class="muted">(${esc(j.language)})</span></h2>
+      <div class="score">${ring(s.overall)}
+        <div>
+          <span class="badge ${esc(s.recommendation)}">${esc(s.recommendation.replaceAll("_", " "))}</span>
+          <p style="margin:10px 0 12px">${esc(s.summary)}</p>
+          <div class="bars">${Object.entries(s.breakdown).map(([k, v]) =>
+            `<span>${esc(k)}</span><div class="bar"><i style="width:${v}%"></i></div><span>${v}</span>`).join("")}</div>
+        </div>
+      </div>
+      <div class="two" style="margin-top:16px">
+        <div><strong>Strengths</strong><ul class="plain">${s.strengths.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>
+        <div><strong>Gaps</strong><ul class="plain">${s.gaps.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>
+      </div>
+      <div style="margin-top:14px"><strong>Keywords</strong>
+        <div class="chips" style="margin-top:6px">
+          ${s.matched_keywords.map(k => `<span class="kw hit">✓ ${esc(k)}</span>`).join("")}
+          ${s.missing_keywords.map(k => `<span class="kw ${unc.has(k) ? "unc" : "miss"}" title="${unc.has(k) ? "listed as unconfirmed in your source of truth" : "not found in your profile"}">${unc.has(k) ? "?" : "✗"} ${esc(k)}</span>`).join("")}
+        </div>
+        ${s.unconfirmed_matches.length ? `<p class="hint">Amber keywords are marked "unconfirmed" in your source of truth. Confirm them there to let cvforge use them.</p>` : ""}
+      </div>`;
+    $("score-panel").classList.remove("hidden");
+  }
+  $("gen-panel").classList.remove("hidden");
+  $("insights-panel").classList.remove("hidden");
+  renderVariants(app);
+  renderInsights(app.insights);
+  loadApps();
+}
+
+function renderVariants(app) {
+  if (!app.variants.length) { $("variants-panel").classList.add("hidden"); return; }
+  $("variants-panel").classList.remove("hidden");
+  $("variants").innerHTML = [...app.variants].reverse().map(v => {
+    const items = [...v.checks.pdf.items.map(i => ({...i, f: "PDF"})), ...v.checks.docx.items.map(i => ({...i, f: "DOCX"}))];
+    const issues = items.filter(i => i.status !== "pass");
+    return `<div class="variant">
+      <div class="variant-head"><span class="badge ${v.status}">${v.status}</span>
+        <strong>${esc(v.style)} · ${esc(v.template)}</strong>${v.one_page ? `<span class="badge pass">one page</span>` : ""}<span class="muted">${v.checks.pdf.pages} page(s)</span>
+        <a href="${fileUrl(v.pdf)}" target="_blank">PDF</a><a href="${fileUrl(v.docx)}">DOCX</a><a href="${fileUrl(v.cv_json)}" target="_blank">JSON</a></div>
+      ${issues.length ? `<ul class="plain">${issues.map(i => `<li><span class="badge ${i.status}">${i.status}</span> ${i.f} · ${esc(i.rule)}: ${esc(i.detail)}</li>`).join("")}</ul>` : ""}
+      <div class="previews">${v.previews.map(p => `<a href="${fileUrl(v.pdf)}" target="_blank"><img loading="lazy" src="${fileUrl("previews/" + p)}&v=${Date.now()}" alt="CV page preview"></a>`).join("")}</div>
+      <details><summary>All ${items.length} ATS &amp; visual checks</summary>
+        ${items.map(i => `<div class="check"><span class="s-${i.status}">${i.status === "pass" ? "✓" : i.status === "warn" ? "!" : "✗"}</span><span>${i.f} · ${esc(i.rule)}</span><span class="muted">${esc(i.detail)}</span></div>`).join("")}
+      </details></div>`;
+  }).join("");
+  // previews need ?token when set; without a token the '&v=' still works as a query string
+  $("variants").querySelectorAll("img").forEach(img => { if (!img.src.includes("?")) img.src = img.src.replace("&v=", "?v="); });
+  if (app.errors && app.errors.length) {
+    $("variants").insertAdjacentHTML("afterbegin", `<div class="error">${app.errors.map(esc).join("\n")}</div>`);
+  }
+}
+
+function renderInsights(ins) {
+  if (!ins) { $("insights").innerHTML = ""; return; }
+  $("insights").innerHTML = `
+    <p class="hint">Generated from the LLM's general knowledge, not live market data.</p>
+    <div class="two">
+      <div><strong>Search also for</strong><div class="chips" style="margin-top:6px">${ins.related_titles.map(t => `<span class="kw miss">${esc(t)}</span>`).join("")}</div></div>
+      <div><strong>What to learn next</strong><ol class="plain">${ins.upskilling.map(u => `<li>${esc(u)}</li>`).join("")}</ol></div>
+    </div>
+    <div style="margin-top:14px"><strong>Typical requirements</strong><ul class="plain" style="list-style:none;padding:0">
+      ${ins.typical_requirements.map(r => `<li>${r.candidate_has ? "✅" : "⬜"} ${esc(r.requirement)} <span class="muted">${esc(r.note)}</span></li>`).join("")}</ul></div>
+    <div style="margin-top:14px"><strong>Likely interview topics</strong><ul class="plain">
+      ${ins.interview_topics.map(t => `<li><strong>${esc(t.topic)}</strong>${t.story ? ` <span class="muted">→ ${esc(t.story)}</span>` : ""}</li>`).join("")}</ul></div>
+    ${ins.market_notes.length ? `<div style="margin-top:14px"><strong>Market notes</strong><ul class="plain">${ins.market_notes.map(n => `<li>${esc(n)}</li>`).join("")}</ul></div>` : ""}`;
+}
+
+$("btn-score").onclick = () => busy($("btn-score"), $("status-score"), $("err-score"), "analysing offer & scoring", async () => {
+  const offer = $("offer").value.trim();
+  if (!offer) throw new Error("Paste a job offer or URL first.");
+  show(await api("/api/applications", { candidate: $("candidate").value, offer, lang: $("lang").value || null }));
+});
+$("btn-gen").onclick = () => busy($("btn-gen"), $("status-gen"), $("err-gen"), "writing & rendering CV", async () => {
+  const styles = [...document.querySelectorAll("input[name=style]:checked")].map(i => i.value);
+  const templates = [...document.querySelectorAll("input[name=tpl]:checked")].map(i => i.value);
+  if (!styles.length || !templates.length) throw new Error("Pick at least one style and one template.");
+  show(await api(`/api/applications/${encodeURIComponent(APP.candidate)}/${encodeURIComponent(APP.application)}/variants`,
+    { styles, templates, lang: $("lang").value || null, visual_review: $("visual").checked, one_page: $("one-page").checked }));
+});
+$("btn-ins").onclick = () => busy($("btn-ins"), $("status-ins"), $("err-ins"), "researching similar positions", async () => {
+  show(await api(`/api/applications/${encodeURIComponent(APP.candidate)}/${encodeURIComponent(APP.application)}/insights`,
+    { lang: $("lang").value || null }));
+});
+
+// ------------------------------------------------------------------ setup
+let SETUP = null, PRESET = null;
+
+function showView(v) {
+  ["create", "setup"].forEach(id => $("view-" + id).classList.toggle("hidden", id !== v));
+  document.querySelectorAll("header nav button").forEach(b => b.classList.toggle("active", b.dataset.view === v));
+  try { history.replaceState(null, "", "#" + v); } catch {}
+  if (v === "setup") loadSetup().catch(e => { $("status-llm").textContent = e.message; });
+}
+document.querySelectorAll("header nav button").forEach(b => b.onclick = () => showView(b.dataset.view));
+
+function currentPresetId() {
+  const l = SETUP.llm;
+  if (!SETUP.has_config) {
+    const found = SETUP.presets.find(p => p.detected && !["custom", "manual"].includes(p.id) && (p.id !== "ollama" || (p.models || []).length));
+    return found ? found.id : "manual";
+  }
+  if (l.provider === "manual") return "manual";
+  if (l.provider === "openai") return l.base_url.includes(":11434") ? "ollama" : "openai";
+  return (SETUP.presets.find(p => p.kind === "command" && p.command && p.command === l.command) || {id: "custom"}).id;
+}
+
+function field(id, label, value, attrs = "") {
+  return `<div><label for="${id}">${label}</label><input type="text" id="${id}" value="${esc(value)}" ${attrs}></div>`;
+}
+
+function renderPresets(id) {
+  PRESET = SETUP.presets.find(p => p.id === id);
+  const l = SETUP.llm, same = id === currentPresetId() && SETUP.has_config;
+  $("presets").innerHTML = SETUP.presets.map(p => {
+    const tag = p.id === "manual" ? `<small>no install needed</small>`
+      : p.id === "ollama" ? (p.running ? `<small class="found">● running · ${(p.models || []).length} model(s)</small>` : p.detected ? `<small>installed, not running</small>` : `<small>not found</small>`)
+      : p.id === "openai" || p.id === "custom" ? `<small>${p.id === "openai" ? "paste an API key" : "any command"}</small>`
+      : p.detected ? `<small class="found">● found</small>` : `<small>not found</small>`;
+    return `<button class="preset ${p.id === id ? "active" : ""}" data-id="${p.id}"><strong>${esc(p.label)}</strong>${tag}</button>`;
+  }).join("");
+  $("presets").querySelectorAll(".preset").forEach(b => b.onclick = () => renderPresets(b.dataset.id));
+  $("preset-hint").textContent = PRESET.hint || "";
+  let f = "";
+  if (PRESET.kind === "command") {
+    f = field("f-command", "Command", same ? l.command : PRESET.command, `placeholder="e.g. mytool --stdin" style="font-family:var(--mono)"`);
+  } else if (PRESET.kind === "openai") {
+    f = field("f-base", "Base URL", same ? l.base_url : PRESET.base_url);
+    if (PRESET.id === "ollama" && (PRESET.models || []).length) {
+      f += `<div><label for="f-model">Model</label><select id="f-model">${PRESET.models.map(m => `<option ${same && m === l.model ? "selected" : ""}>${esc(m)}</option>`).join("")}</select></div>`;
+    } else {
+      f += field("f-model", "Model", same ? l.model : "", `placeholder="${PRESET.id === "ollama" ? "e.g. qwen3:8b (run: ollama pull qwen3:8b)" : "e.g. gpt-4.1-mini or anthropic/claude-sonnet-4.5"}"`);
+    }
+    if (PRESET.id !== "ollama") {
+      f += `<div><label for="f-key">API key</label><input type="password" id="f-key" autocomplete="off" placeholder="${l.api_key_set ? "saved — leave empty to keep" : "sk-…"}"></div>`;
+    }
+  } else if (PRESET.kind === "manual") {
+    f = field("f-dir", "Folder for prompts & answers", l.manual_dir);
+  }
+  $("llm-fields").innerHTML = f;
+  $("llm-result").innerHTML = "";
+}
+
+function llmBody() {
+  const v = id => ($(id) ? $(id).value.trim() : "");
+  const key = $("f-key") ? $("f-key").value.trim() : "";
+  return { provider: PRESET.kind, command: v("f-command"), base_url: v("f-base"), model: v("f-model"),
+           api_key: key ? key : (PRESET.id === "ollama" ? "" : null), manual_dir: v("f-dir") || null };
+}
+
+function renderSetupStatus() {
+  $("dot-llm").className = "dot " + (SETUP.has_config ? "ok" : "todo");
+  $("dot-cand").className = "dot " + (SETUP.candidates.length ? "ok" : "todo");
+  $("cfg-path").textContent = SETUP.config_path ? "Settings: " + SETUP.config_path
+    : "Settings will be saved as cvforge.toml in the folder you started cvforge from.";
+  $("welcome").classList.toggle("hidden", SETUP.has_config && SETUP.candidates.length > 0);
+  const sel = $("sot-cand").value || SETUP.default_candidate;
+  $("sot-cand").innerHTML = SETUP.candidates.map(c => `<option ${c === sel ? "selected" : ""}>${esc(c)}</option>`).join("")
+    || `<option value="">— add a candidate →</option>`;
+  $("def-style").innerHTML = SETUP.styles.map(x => `<option ${x === SETUP.default_style ? "selected" : ""}>${esc(x)}</option>`).join("");
+  $("def-tpl").innerHTML = SETUP.templates.map(x => `<option ${x === SETUP.default_template ? "selected" : ""}>${esc(x)}</option>`).join("");
+}
+
+async function loadSetup() {
+  SETUP = await api("/api/setup/status");
+  renderPresets(currentPresetId());
+  renderSetupStatus();
+  await loadSource($("sot-cand").value);
+}
+
+async function loadSource(name) {
+  $("ingest-result").innerHTML = "";
+  if (!name) {
+    $("sot").value = (await api("/api/setup/sot-template")).text;
+    $("status-sot").textContent = "Template loaded — add a candidate name above, then save.";
+    return;
+  }
+  try {
+    const r = await api(`/api/candidates/${encodeURIComponent(name)}/source`);
+    $("sot").value = r.text; $("status-sot").textContent = r.path;
+  } catch (e) { $("sot").value = ""; $("status-sot").textContent = e.message; }
+}
+$("sot-cand").onchange = () => loadSource($("sot-cand").value);
+
+$("btn-test").onclick = () => {
+  $("llm-result").innerHTML = `<div class="result">⏳ Asking ${esc(PRESET.label)} to reply “OK” — this can take up to a minute…</div>`;
+  return busy($("btn-test"), $("status-llm"), $("err-llm"), "testing", async () => {
+  const r = await api("/api/setup/llm/test", llmBody());
+  $("llm-result").innerHTML = r.note ? `<div class="result ok">${esc(r.note)}</div>`
+    : r.ok ? `<div class="result ok">✓ Connected in ${r.seconds}s — the model answered “${esc(r.answer)}”. Don't forget to Save.</div>`
+    : `<div class="result bad">✗ ${esc(r.error)}${r.answer ? "\nAnswer: " + esc(r.answer) : ""}</div>`;
+  }).finally(() => { if ($("llm-result").textContent.startsWith("⏳")) $("llm-result").innerHTML = ""; });
+};
+$("btn-save-llm").onclick = () => busy($("btn-save-llm"), $("status-llm"), $("err-llm"), "saving", async () => {
+  SETUP = await api("/api/setup/llm", llmBody());
+  renderPresets(currentPresetId()); renderSetupStatus();
+  $("llm-result").innerHTML = `<div class="result ok">✓ Saved. cvforge will use ${esc(PRESET.label)}.</div>`;
+});
+
+$("btn-new-cand").onclick = () => busy($("btn-new-cand"), $("status-sot"), $("err-sot"), "creating", async () => {
+  const name = $("new-cand").value.trim().toLowerCase();
+  if (!name) throw new Error("Type a short name, e.g. anna");
+  const keep = !SETUP.candidates.length ? $("sot").value : null;  // keep what was typed into the template
+  SETUP = await api("/api/candidates", { name, source: keep });
+  $("new-cand").value = ""; renderSetupStatus(); $("sot-cand").value = name;
+  await loadSource(name);
+});
+
+$("sot-file").onchange = async (e) => {
+  const f = e.target.files[0]; if (!f) return;
+  $("sot").value = await f.text();
+  $("status-sot").textContent = `Loaded ${f.name} — not saved yet.`;
+  e.target.value = "";
+};
+
+async function saveSource() {
+  const name = $("sot-cand").value;
+  if (!name) throw new Error("Add a candidate first (name field above).");
+  const r = await api(`/api/candidates/${encodeURIComponent(name)}/source`, { text: $("sot").value }, "PUT");
+  return name;
+}
+$("btn-save-sot").onclick = () => busy($("btn-save-sot"), $("status-sot"), $("err-sot"), "saving", async () => { await saveSource(); });
+$("btn-ingest").onclick = () => busy($("btn-ingest"), $("status-sot"), $("err-sot"), "reading your career data with the AI", async () => {
+  const candidate = await saveSource();
+  const r = await api("/api/ingest", { candidate, force: true });
+  $("ingest-result").innerHTML = `<div class="summary-grid">
+      <div class="stat"><b>${r.roles}</b>jobs</div><div class="stat"><b>${r.projects}</b>projects</div><div class="stat"><b>${r.skills}</b>skills</div></div>
+    <p class="hint">Never put in a CV: ${r.redactions.length ? r.redactions.map(esc).join(", ") : "—"}<br>
+    Unconfirmed (not used until you confirm): ${r.unconfirmed_keywords.length ? r.unconfirmed_keywords.map(esc).join(", ") : "—"}</p>`;
+});
+
+$("btn-save-def").onclick = () => busy($("btn-save-def"), $("status-def"), $("err-def"), "saving", async () => {
+  SETUP = await api("/api/setup/defaults", { default_candidate: $("sot-cand").value || null,
+    default_template: $("def-tpl").value, default_style: $("def-style").value });
+  renderSetupStatus();
+});
+$("btn-go-create").onclick = async () => { await init(); showView("create"); };
+
+async function firstRun() {
+  try {
+    const st = await api("/api/setup/status");
+    if (location.hash === "#setup" || !st.has_config || !st.candidates.length) showView("setup");
+  } catch { $("tab-setup").classList.add("hidden"); }  // setup is local-only
+}
+init().then(firstRun).catch(e => document.body.insertAdjacentHTML("beforeend", `<div class="error" style="margin:24px">${esc(e.message)}</div>`));
+</script>
+</body>
+</html>

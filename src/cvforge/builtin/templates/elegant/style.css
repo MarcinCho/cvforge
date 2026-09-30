@@ -1,0 +1,13 @@
+@page { size: A4; margin: 17mm 20mm 16mm 20mm; }
+:root { --font: "Noto Sans", sans-serif; --serif: "Noto Serif", serif; --size: 9.6pt; --name-size: 26pt;
+        --h2-size: 12pt; --text: #20242a; --muted: #6b7280; --accent: #2d3a4a; --section-gap: 5.6mm; }
+body { line-height: 1.42; }
+h1.name { font-family: var(--serif); font-weight: 400; letter-spacing: 0.01em; }
+.headline { font-family: var(--serif); font-style: italic; font-weight: 400; color: var(--muted); }
+h2 { font-family: var(--serif); font-weight: 600; text-transform: none; letter-spacing: 0.02em;
+     color: var(--accent); border-bottom: 0.4pt solid #c7ccd3; padding-bottom: 1mm; margin-bottom: 2.4mm; }
+h3 { font-weight: 600; }
+.sep { color: #b3b8bf; }
+.company { font-weight: 400; color: var(--muted); }
+.dates { font-weight: 400; }
+li::marker { color: #9aa1ab; }

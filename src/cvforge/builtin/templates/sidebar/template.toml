@@ -1,0 +1,19 @@
+name = "sidebar"
+description = "Two-column design with a tinted sidebar (contact, skills, education, languages). For sending directly to people or networking; not guaranteed for ATS uploads. Its DOCX is single-column."
+ats_safe = false
+max_pages = 2
+fonts = ["Lato"]
+# used by this template's cv.html.j2
+sidebar = ["skills", "education", "certifications", "languages"]
+main = ["summary", "experience", "projects"]
+sections = ["summary", "experience", "projects", "skills", "education", "certifications", "languages"]
+
+[docx]
+font = "Calibri"
+body_size = 10.5
+name_size = 22
+heading_size = 12
+accent = "1F4E79"
+muted = "56606B"
+margins_cm = 1.7
+heading_rule = true

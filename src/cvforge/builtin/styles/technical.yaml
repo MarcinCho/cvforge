@@ -1,0 +1,7 @@
+name: technical
+description: Engineer-to-engineer tone. Emphasises tools, architecture and how things were built.
+instructions: |
+  - Bullets name the concrete technologies, protocols and tools used (from the source) and what was built/configured.
+  - Group skills by technical domain; put the job's core stack first.
+  - Summary highlights the technical stack and the kind of systems handled (scale from the source).
+  - Avoid business fluff; precise, dense wording.

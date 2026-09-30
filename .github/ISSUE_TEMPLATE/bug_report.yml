@@ -1,0 +1,56 @@
+name: Bug report
+description: Something doesn't work as documented.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! **Don't paste your real CV, source of truth or API keys**: replace personal details with made-up ones.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Commands, HTTP requests or web UI clicks. A minimal job offer or CV JSON helps a lot.
+      placeholder: |
+        1. cvforge run offer.txt -t ats-modern
+        2. ...
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Output / error message
+      description: Terminal output, the relevant part of a `*.check.json`, or a screenshot.
+      render: shell
+  - type: input
+    id: version
+    attributes:
+      label: cvforge version
+      description: Output of `pip show cvforge` (Version line) or the commit you're on.
+    validations:
+      required: true
+  - type: dropdown
+    id: provider
+    attributes:
+      label: LLM provider
+      options:
+        - command (a CLI such as claude, gemini, codex, ollama)
+        - openai (HTTP API)
+        - manual (copy and paste)
+        - not LLM-related
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: OS and Python version
+      placeholder: Ubuntu 24.04, Python 3.12
+    validations:
+      required: true

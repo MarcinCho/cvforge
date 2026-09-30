@@ -1,0 +1,10 @@
+@page { size: A4; margin: 14mm 17mm 14mm 17mm; }
+@page :first { margin-top: 0; }
+:root { --font: "Carlito", sans-serif; --size: 10.8pt; --name-size: 24pt; --h2-size: 11.5pt;
+        --text: #1f1f1f; --muted: #595959; --accent: #2f5496; --section-gap: 4.6mm; }
+header { margin: 0 -17mm; padding: 11mm 17mm 5.5mm; background: #edf2f9; border-bottom: 1.2pt solid var(--accent); }
+h1.name { color: #1c355e; }
+.headline { color: var(--accent); }
+h2 { text-transform: none; letter-spacing: 0.01em; font-size: calc(var(--h2-size) * 1.08 * var(--k));
+     border-left: 1.6mm solid var(--accent); padding: 0.4mm 0 0.4mm 2.6mm; }
+.company { color: var(--accent); }

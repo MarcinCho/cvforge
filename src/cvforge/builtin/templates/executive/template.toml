@@ -1,0 +1,16 @@
+name = "executive"
+description = "Classic serif layout with a centred header and burgundy accents. For senior, management and consulting roles."
+ats_safe = true
+max_pages = 2
+sections = ["summary", "experience", "skills", "education", "certifications", "projects", "languages"]
+fonts = ["Caladea", "NotoSerif"]
+
+[docx]
+font = "Cambria"
+body_size = 10.5
+name_size = 22
+heading_size = 12
+accent = "5A1E2B"
+muted = "555555"
+margins_cm = 1.9
+heading_rule = true

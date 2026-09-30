@@ -1,0 +1,16 @@
+name = "timeline"
+description = "Experience and education drawn on a vertical timeline with teal markers. Visual but still single-column and ATS-safe."
+ats_safe = true
+max_pages = 2
+sections = ["summary", "experience", "skills", "projects", "education", "certifications", "languages"]
+fonts = ["Lato"]
+
+[docx]
+font = "Calibri"
+body_size = 10.5
+name_size = 22
+heading_size = 12
+accent = "0F6E78"
+muted = "56606B"
+margins_cm = 1.7
+heading_rule = true

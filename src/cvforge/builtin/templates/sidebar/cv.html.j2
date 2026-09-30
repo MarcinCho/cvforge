@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="{{ cv.language }}">
+<head>
+<meta charset="utf-8">
+<title>{{ cv.contact.name }} — CV</title>
+<meta name="author" content="{{ cv.contact.name }}">
+<meta name="keywords" content="{{ cv.target_keywords | join(', ') }}">
+<style>
+{{ fonts_css | safe }}
+{{ css | safe }}
+</style>
+</head>
+<body class="density-{{ density }}">
+<aside class="side">
+  <h1 class="name">{{ cv.contact.name }}</h1>
+  <p class="headline">{{ cv.headline }}</p>
+
+  <section class="contact-block">
+    <h2>{{ label('contact') }}</h2>
+    {% if cv.contact.location %}<p>{{ cv.contact.location }}</p>{% endif %}
+    {% if cv.contact.phone %}<p>{{ cv.contact.phone }}</p>{% endif %}
+    {% if cv.contact.email %}<p>{{ cv.contact.email }}</p>{% endif %}
+    {% for l in cv.contact.links %}<p>{{ l | display_url }}</p>{% endfor %}
+  </section>
+
+  {% for section in template.sidebar %}
+  {% if section == "skills" and cv.skills %}
+  <section class="skills">
+    <h2>{{ cv.section_titles.skills }}</h2>
+    {% for g in cv.skills %}
+    <p class="skill-cat">{{ g.category }}</p>
+    <p class="skill-items">{{ g.items | join(', ') }}</p>
+    {% endfor %}
+  </section>
+  {% elif section == "education" and cv.education %}
+  <section class="education">
+    <h2>{{ cv.section_titles.education }}</h2>
+    {% for e in cv.education %}
+    <div class="edu">
+      <p class="degree">{{ e.degree }}</p>
+      <p>{{ e.institution }}</p>
+      {% if e.start or e.end %}<p class="dates">{{ e.start | date }}{% if e.start and e.end %} – {% endif %}{{ e.end | date }}</p>{% endif %}
+    </div>
+    {% endfor %}
+  </section>
+  {% elif section == "certifications" and cv.certifications %}
+  <section class="certifications">
+    <h2>{{ cv.section_titles.certifications }}</h2>
+    {% for c in cv.certifications %}<p>{{ c }}</p>{% endfor %}
+  </section>
+  {% elif section == "languages" and cv.languages %}
+  <section class="languages">
+    <h2>{{ cv.section_titles.languages }}</h2>
+    {% for l in cv.languages %}<p>{{ l }}</p>{% endfor %}
+  </section>
+  {% endif %}
+  {% endfor %}
+</aside>
+
+<main class="main">
+  {% for section in template.main %}
+  {% if section == "summary" and cv.summary %}
+  <section class="summary">
+    <h2>{{ cv.section_titles.summary }}</h2>
+    <p>{{ cv.summary }}</p>
+  </section>
+  {% elif section == "experience" and cv.experience %}
+  <section class="experience">
+    <h2>{{ cv.section_titles.experience }}</h2>
+    {% for job in cv.experience %}
+    <article class="job">
+      <h3>{{ job.title }}</h3>
+      <p class="meta"><span class="company">{{ job.company }}</span>{% if job.location %} · {{ job.location }}{% endif %} · <span class="dates">{{ job.start | date }} – {{ job.end | date }}</span></p>
+      {% if job.bullets %}<ul>{% for b in job.bullets %}<li>{{ b.text }}</li>{% endfor %}</ul>{% endif %}
+    </article>
+    {% endfor %}
+  </section>
+  {% elif section == "projects" and cv.projects %}
+  <section class="projects">
+    <h2>{{ cv.section_titles.projects }}</h2>
+    {% for p in cv.projects %}
+    <article class="job">
+      <h3>{{ p.name }}</h3>
+      <ul>{% for b in p.bullets %}<li>{{ b.text }}</li>{% endfor %}</ul>
+    </article>
+    {% endfor %}
+  </section>
+  {% endif %}
+  {% endfor %}
+  {% if cv.gdpr_clause %}<p class="gdpr">{{ cv.gdpr_clause }}</p>{% endif %}
+</main>
+</body>
+</html>

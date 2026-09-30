@@ -1,0 +1,29 @@
+{
+  "language": "pl",
+  "style": "impact",
+  "contact": {"name": "Jan Kowalski", "location": "Kraków, Polska", "phone": "+48 600 000 000",
+              "email": "jan.kowalski@example.com", "links": ["https://www.linkedin.com/in/jan-kowalski/", "https://github.com/jankowalski"]},
+  "headline": "Specjalista ds. Cyberbezpieczeństwa",
+  "summary": "Specjalista IT z doświadczeniem w zarządzaniu tożsamością i dostępami dla ok. 3500 użytkowników. Wdrażam MFA, polityki bezpieczeństwa i automatyzację w PowerShell oraz Pythonie. Łączę kompetencje techniczne z zarządzaniem projektami w środowisku międzynarodowym.",
+  "experience": [
+    {"title": "Lider Projektów IT", "company": "Firma Retail IT", "location": "Bielsko-Biała", "start": "01/2025", "end": "present",
+     "bullets": [
+       {"text": "Osiągnąłem 80% adopcji MFA w kluczowych narzędziach, wspierając wdrożenie dyrektywy NIS2.", "source_ids": ["exp1.b1"]},
+       {"text": "Zmigrowałem 75 serwerów do Windows Server 2022 i 200 komputerów do Windows 11 w 2 miesiące, bez zakłóceń pracy sklepów.", "source_ids": ["exp1.b2"]},
+       {"text": "Wdrożyłem integrację z KSeF w 75 lokalizacjach w 7 dni, przygotowując paczki automatyzujące wdrożenie.", "source_ids": ["exp1.b3"]},
+       {"text": "Zautomatyzowałem obsługę zgłoszeń w n8n — oszczędność ok. 3 minut na ticket.", "source_ids": ["exp1.b4"]}
+     ]},
+    {"title": "Specjalista ds. IT", "company": "Placówka medyczna", "location": "Bielsko-Biała", "start": "06/2024", "end": "12/2024",
+     "bullets": [{"text": "Zbudowałem polityki bezpieczeństwa: MFA, menedżery haseł, zasady zero trust, backupy danych pacjentów.", "source_ids": ["exp2.b1"]}]}
+  ],
+  "projects": [{"name": "Wdrożenie SIEM (Graylog)", "bullets": [{"text": "Zaprojektowałem i wdrożyłem Graylog: źródła danych i dashboardy.", "source_ids": ["proj1.b1"]}]}],
+  "skills": [{"category": "Bezpieczeństwo / IAM", "items": ["Active Directory", "Azure AD", "Okta", "MFA", "NIS2", "Zero trust"]},
+             {"category": "Automatyzacja", "items": ["PowerShell", "Python", "n8n", "Docker"]}],
+  "education": [{"degree": "Magister, Informatyka (spec. Cyberbezpieczeństwo)", "institution": "Uniwersytet Bielsko-Bialski", "start": "2025", "end": "02/2027", "notes": "Praca dyplomowa: poufne wykrywanie przecięć w dochodzeniach blockchain (AML)"}],
+  "certifications": ["AWS Academy Cloud Security Foundations (06/2026)"],
+  "languages": ["Polski — ojczysty", "Angielski — C1", "Norweski — B2"],
+  "section_titles": {"summary": "Podsumowanie zawodowe", "experience": "Doświadczenie zawodowe", "projects": "Projekty",
+                     "skills": "Umiejętności", "education": "Wykształcenie", "certifications": "Certyfikaty", "languages": "Języki"},
+  "target_keywords": ["MFA", "NIS2", "Active Directory", "SIEM", "PowerShell"],
+  "gdpr_clause": "Wyrażam zgodę na przetwarzanie moich danych osobowych przez Przykładowa Sp. z o.o. w celu prowadzenia rekrutacji na aplikowane przeze mnie stanowisko."
+}

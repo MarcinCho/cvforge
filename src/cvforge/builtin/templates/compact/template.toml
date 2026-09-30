@@ -1,0 +1,16 @@
+name = "compact"
+description = "Dense one-page layout for short applications or early-career CVs."
+ats_safe = true
+max_pages = 1
+sections = ["summary", "skills", "experience", "education", "certifications", "languages", "projects"]
+fonts = ["NotoSans"]
+
+[docx]
+font = "Calibri"
+body_size = 9.5
+name_size = 17
+heading_size = 10.5
+accent = "2E4A3F"
+muted = "4A4A4A"
+margins_cm = 1.4
+heading_rule = false

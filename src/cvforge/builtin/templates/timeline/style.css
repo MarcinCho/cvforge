@@ -1,0 +1,13 @@
+@page { size: A4; margin: 14mm 16mm 14mm 16mm; }
+:root { --font: "Lato", sans-serif; --size: 10pt; --name-size: 24pt; --h2-size: 10.5pt;
+        --text: #1d232a; --muted: #56606b; --accent: #0f6e78; --section-gap: 4.6mm; }
+h1.name { color: var(--accent); }
+h2 { border-bottom: 1pt solid #cfdfe1; letter-spacing: 0.05em; }
+.experience .job, .education .edu {
+  position: relative; margin: 0 0 0 1.4mm; padding: 0 0 2.6mm 5.2mm; border-left: 0.9pt solid #bfd6d9; }
+.experience .job:last-child, .education .edu:last-child { border-left-color: transparent; }
+.experience .job::before, .education .edu::before {
+  content: ""; position: absolute; left: -1.45mm; top: 1.1mm; width: 2.1mm; height: 2.1mm;
+  border-radius: 50%; background: var(--accent); }
+.dates { color: var(--accent); }
+.company { color: var(--muted); font-weight: 700; }

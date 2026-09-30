@@ -1,0 +1,7 @@
+@page { size: A4; margin: 11mm 13mm 11mm 13mm; }
+:root { --font: "Noto Sans", sans-serif; --size: 9pt; --name-size: 17pt; --h2-size: 9.6pt;
+        --text: #111; --muted: #4a4a4a; --accent: #2e4a3f; --section-gap: 3mm; }
+body { line-height: 1.28; }
+h2 { background: #eef2f0; padding: 0.6mm 1.5mm; margin-bottom: 1.2mm; }
+.job, .project, .edu { margin-bottom: 1.6mm; }
+li { margin-bottom: 0.2mm; }

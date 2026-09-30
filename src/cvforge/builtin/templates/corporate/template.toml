@@ -1,0 +1,16 @@
+name = "corporate"
+description = "Calibri-style layout with a light header band and blue accent bars. Looks identical in PDF and Word; a safe pick for corporate HR."
+ats_safe = true
+max_pages = 2
+sections = ["summary", "experience", "skills", "education", "certifications", "languages", "projects"]
+fonts = ["Carlito"]
+
+[docx]
+font = "Calibri"
+body_size = 10.5
+name_size = 22
+heading_size = 12
+accent = "2F5496"
+muted = "595959"
+margins_cm = 1.8
+heading_rule = false

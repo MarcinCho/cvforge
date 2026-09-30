@@ -1,0 +1,12 @@
+@page { size: A4; margin: 16mm 19mm 15mm 19mm; }
+:root { --font: "Caladea", "Noto Serif", serif; --size: 10.6pt; --name-size: 25pt; --h2-size: 11pt;
+        --text: #1b1b1b; --muted: #555; --accent: #5a1e2b; --section-gap: 5mm; }
+header { text-align: center; padding-bottom: 3.2mm; border-bottom: 2.4pt double var(--accent); }
+h1.name { text-transform: uppercase; letter-spacing: 0.04em; font-weight: 700; }
+.headline { color: var(--accent); font-style: italic; font-weight: 400; margin-top: 1.4mm; }
+.contact { margin-top: 1.8mm; }
+h2 { color: var(--accent); letter-spacing: 0.05em; font-weight: 700; border-bottom: 0.5pt solid #b9a9ac; }
+.company { font-style: italic; font-weight: 400; }
+.sep { color: var(--muted); }
+.dates { font-weight: 400; font-style: italic; }
+li::marker { color: var(--accent); }

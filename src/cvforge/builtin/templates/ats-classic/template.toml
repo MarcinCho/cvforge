@@ -1,0 +1,16 @@
+name = "ats-classic"
+description = "Plain single-column layout with black headings and thin rules. The safest choice for any ATS."
+ats_safe = true
+max_pages = 2
+sections = ["summary", "experience", "skills", "projects", "education", "certifications", "languages"]
+fonts = ["NotoSans"]
+
+[docx]
+font = "Calibri"
+body_size = 10.5
+name_size = 20
+heading_size = 11.5
+accent = "000000"
+muted = "444444"
+margins_cm = 1.8
+heading_rule = true

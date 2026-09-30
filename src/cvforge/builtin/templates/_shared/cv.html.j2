@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="{{ cv.language }}">
+<head>
+<meta charset="utf-8">
+<title>{{ cv.contact.name }} — CV</title>
+<meta name="author" content="{{ cv.contact.name }}">
+<meta name="description" content="{{ cv.headline }}">
+<meta name="keywords" content="{{ cv.target_keywords | join(', ') }}">
+<style>
+{{ fonts_css | safe }}
+{{ css | safe }}
+</style>
+</head>
+<body class="density-{{ density }}">
+<header>
+  <h1 class="name">{{ cv.contact.name }}</h1>
+  <p class="headline">{{ cv.headline }}</p>
+  <p class="contact">
+    {%- set parts = [] -%}
+    {%- if cv.contact.location %}{% set _ = parts.append(cv.contact.location) %}{% endif -%}
+    {%- if cv.contact.phone %}{% set _ = parts.append(cv.contact.phone) %}{% endif -%}
+    {%- if cv.contact.email %}{% set _ = parts.append(cv.contact.email) %}{% endif -%}
+    {%- for l in cv.contact.links %}{% set _ = parts.append(l | display_url) %}{% endfor -%}
+    {% for p in parts %}<span class="c">{{ p }}</span>{% if not loop.last %} | {% endif %}{% endfor %}
+  </p>
+</header>
+{% for section in sections %}
+{% if section == "summary" and cv.summary %}
+<section class="summary">
+  <h2>{{ cv.section_titles.summary }}</h2>
+  <p>{{ cv.summary }}</p>
+</section>
+{% elif section == "experience" and cv.experience %}
+<section class="experience">
+  <h2>{{ cv.section_titles.experience }}</h2>
+  {% for job in cv.experience %}
+  <article class="job">
+    <div class="job-head">
+      <h3><span class="title">{{ job.title }}</span><span class="sep"> | </span><span class="company">{{ job.company }}</span></h3>
+      <span class="dates">{{ job.start | date }} – {{ job.end | date }}</span>
+    </div>
+    {% if job.location %}<p class="meta">{{ job.location }}</p>{% endif %}
+    {% if job.bullets %}
+    <ul>{% for b in job.bullets %}<li>{{ b.text }}</li>{% endfor %}</ul>
+    {% endif %}
+  </article>
+  {% endfor %}
+</section>
+{% elif section == "projects" and cv.projects %}
+<section class="projects">
+  <h2>{{ cv.section_titles.projects }}</h2>
+  {% for p in cv.projects %}
+  <article class="project">
+    <h3>{{ p.name }}</h3>
+    <ul>{% for b in p.bullets %}<li>{{ b.text }}</li>{% endfor %}</ul>
+  </article>
+  {% endfor %}
+</section>
+{% elif section == "skills" and cv.skills %}
+<section class="skills">
+  <h2>{{ cv.section_titles.skills }}</h2>
+  {% for g in cv.skills %}
+  {% if template.skill_tags %}
+  <div class="skill-group tags"><strong>{{ g.category }}:</strong> {% for i in g.items %}<span class="tag">{{ i }}</span>{% if not loop.last %} {% endif %}{% endfor %}</div>
+  {% else %}
+  <p class="skill-group"><strong>{{ g.category }}:</strong> {{ g.items | join(', ') }}</p>
+  {% endif %}
+  {% endfor %}
+</section>
+{% elif section == "education" and cv.education %}
+<section class="education">
+  <h2>{{ cv.section_titles.education }}</h2>
+  {% for e in cv.education %}
+  <article class="edu">
+    <div class="job-head">
+      <h3><span class="title">{{ e.degree }}</span><span class="sep"> | </span><span class="company">{{ e.institution }}</span></h3>
+      {% if e.start or e.end %}<span class="dates">{{ e.start | date }}{% if e.start and e.end %} – {% endif %}{{ e.end | date }}</span>{% endif %}
+    </div>
+    {% if e.notes %}<p class="meta">{{ e.notes }}</p>{% endif %}
+  </article>
+  {% endfor %}
+</section>
+{% elif section == "certifications" and cv.certifications %}
+<section class="certifications">
+  <h2>{{ cv.section_titles.certifications }}</h2>
+  <ul>{% for c in cv.certifications %}<li>{{ c }}</li>{% endfor %}</ul>
+</section>
+{% elif section == "languages" and cv.languages %}
+<section class="languages">
+  <h2>{{ cv.section_titles.languages }}</h2>
+  <p>{{ cv.languages | join(' · ') }}</p>
+</section>
+{% endif %}
+{% endfor %}
+{% if cv.gdpr_clause %}
+<p class="gdpr">{{ cv.gdpr_clause }}</p>
+{% endif %}
+</body>
+</html>

@@ -1,0 +1,4 @@
+@page { size: A4; margin: 15mm 17mm 14mm 17mm; }
+:root { --font: "Noto Sans", sans-serif; --size: 9.6pt; --name-size: 21pt; --h2-size: 10.5pt;
+        --text: #111; --muted: #444; --accent: #111; --section-gap: 4.2mm; }
+h2 { border-bottom: 0.6pt solid #111; }

@@ -1,0 +1,22 @@
+@page { size: A4; margin: 14mm 14mm 14mm 0;
+        background: linear-gradient(to right, #eef2f6 0%, #eef2f6 33.3%, #ffffff 33.3%, #ffffff 100%); }
+:root { --font: "Lato", sans-serif; --size: 9.7pt; --name-size: 21pt; --h2-size: 9.8pt;
+        --text: #1d232a; --muted: #56606b; --accent: #1f4e79; --section-gap: 5mm; }
+aside.side { float: left; width: 70mm; padding: 0 7mm 0 10mm; font-size: calc(var(--size) * 0.92 * var(--k)); line-height: 1.3; }
+main.main { margin-left: 78mm; }
+aside h1.name { color: var(--accent); line-height: 1.12; }
+aside .headline { color: var(--text); font-size: calc(var(--size) * 1.08 * var(--k)); margin-top: 2mm; }
+aside section { margin-top: 4.6mm; }
+aside section.contact-block { margin-top: 5.5mm; }
+aside p { margin-bottom: 0.5mm; overflow-wrap: anywhere; }
+aside h2 { border-bottom: 1pt solid #c3cfdb; }
+.skill-cat { font-weight: 700; margin-top: 1.2mm; }
+.edu { margin-bottom: 1.8mm; }
+.degree { font-weight: 700; }
+aside .dates { color: var(--muted); }
+main h2 { border-bottom: 1.2pt solid var(--accent); }
+main section:first-child { margin-top: 0; }
+.job { margin-bottom: 3mm; }
+.job h3 { font-size: calc(var(--size) * 1.08 * var(--k)); }
+.job .meta { font-style: normal; margin-top: 0.3mm; }
+.job .company { color: var(--accent); font-weight: 700; }

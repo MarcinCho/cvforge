@@ -1,0 +1,8 @@
+@page { size: A4; margin: 14mm 16mm 14mm 16mm; }
+:root { --font: "Lato", sans-serif; --size: 10pt; --name-size: 24pt; --h2-size: 10.5pt;
+        --text: #1d232a; --muted: #56606b; --accent: #1f4e79; --section-gap: 4.6mm; }
+header { border-left: 1.4mm solid var(--accent); padding-left: 4mm; }
+h1.name { color: var(--accent); }
+.headline { color: #1d232a; }
+h2 { border-bottom: 1.2pt solid var(--accent); letter-spacing: 0.05em; }
+.company { color: var(--accent); }

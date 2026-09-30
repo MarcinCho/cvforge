@@ -1,0 +1,16 @@
+name = "elegant"
+description = "Airy, minimal design: serif name and headings, sans-serif body, hairline rules, slate accent."
+ats_safe = true
+max_pages = 2
+sections = ["summary", "experience", "skills", "projects", "education", "certifications", "languages"]
+fonts = ["NotoSerif", "NotoSans"]
+
+[docx]
+font = "Calibri"
+body_size = 10.5
+name_size = 24
+heading_size = 12
+accent = "2D3A4A"
+muted = "6B7280"
+margins_cm = 2.0
+heading_rule = true

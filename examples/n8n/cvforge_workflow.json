@@ -1,0 +1,115 @@
+{
+  "name": "cvforge — job offer to tailored CV",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "cvforge-job",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "a1f0c7e2-0001-4b7a-9d11-000000000001",
+      "name": "Job offer in",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "webhookId": "cvforge-job"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.CVFORGE_URL || 'http://host.docker.internal:8765' }}/api/run",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $env.CVFORGE_TOKEN || '' }}" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ candidate: $json.body.candidate || null, offer: $json.body.offer, styles: $json.body.styles || ['impact'], templates: $json.body.templates || ['ats-classic'], min_score: $json.body.min_score ?? 55, insights: true }) }}",
+        "options": { "timeout": 1200000 }
+      },
+      "id": "a1f0c7e2-0002-4b7a-9d11-000000000002",
+      "name": "cvforge run",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [240, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose" },
+          "conditions": [
+            {
+              "id": "c0000000-0000-4000-8000-000000000001",
+              "leftValue": "={{ $json.variants.length }}",
+              "rightValue": 0,
+              "operator": { "type": "number", "operation": "gt" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a1f0c7e2-0003-4b7a-9d11-000000000003",
+      "name": "CV generated?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [480, 0]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.files.variants[0].pdf }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $env.CVFORGE_TOKEN || '' }}" }
+          ]
+        },
+        "options": { "response": { "response": { "responseFormat": "file" } } }
+      },
+      "id": "a1f0c7e2-0004-4b7a-9d11-000000000004",
+      "name": "Download PDF",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [720, -100]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ status: 'generated', score: $('cvforge run').item.json.score.overall, recommendation: $('cvforge run').item.json.score.recommendation, gaps: $('cvforge run').item.json.score.gaps, files: $('cvforge run').item.json.files }) }}",
+        "options": {}
+      },
+      "id": "a1f0c7e2-0005-4b7a-9d11-000000000005",
+      "name": "Respond: CV ready",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [960, -100]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ status: 'skipped', reason: $json.skipped_reason, errors: $json.errors, score: $json.score }) }}",
+        "options": {}
+      },
+      "id": "a1f0c7e2-0006-4b7a-9d11-000000000006",
+      "name": "Respond: skipped",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [720, 120]
+    }
+  ],
+  "connections": {
+    "Job offer in": { "main": [[{ "node": "cvforge run", "type": "main", "index": 0 }]] },
+    "cvforge run": { "main": [[{ "node": "CV generated?", "type": "main", "index": 0 }]] },
+    "CV generated?": {
+      "main": [
+        [{ "node": "Download PDF", "type": "main", "index": 0 }],
+        [{ "node": "Respond: skipped", "type": "main", "index": 0 }]
+      ]
+    },
+    "Download PDF": { "main": [[{ "node": "Respond: CV ready", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}

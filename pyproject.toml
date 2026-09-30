@@ -1,0 +1,77 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cvforge"
+version = "0.1.0"
+description = "ATS-optimized, job-tailored CV generator driven by a candidate's source of truth and any LLM (CLI or HTTP)."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Marcin Chowaniec" }]
+keywords = ["cv", "resume", "ats", "llm", "job-application", "pdf", "docx", "career"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Environment :: Web Environment",
+  "Framework :: FastAPI",
+  "Intended Audience :: End Users/Desktop",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Office/Business",
+  "Topic :: Text Processing :: Markup :: HTML",
+]
+dependencies = [
+  "typer>=0.12",
+  "fastapi>=0.110",
+  "uvicorn[standard]>=0.29",
+  "python-multipart>=0.0.9",
+  "pydantic>=2.6",
+  "jinja2>=3.1",
+  "httpx>=0.27",
+  "pyyaml>=6",
+  "weasyprint>=62",
+  "python-docx>=1.1",
+  "pypdf>=4",
+  "pypdfium2>=4",
+  "rapidfuzz>=3",
+  "langdetect>=1.0.9",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.16", "pre-commit>=3.7"]
+
+[project.urls]
+Homepage = "https://github.com/MarcinCho/cvforge"
+Documentation = "https://github.com/MarcinCho/cvforge/tree/main/docs"
+Issues = "https://github.com/MarcinCho/cvforge/issues"
+Changelog = "https://github.com/MarcinCho/cvforge/blob/main/CHANGELOG.md"
+
+[project.scripts]
+cvforge = "cvforge.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+cvforge = ["prompts/*", "web/templates/*", "web/static/*", "builtin/*.md", "builtin/styles/*", "builtin/fonts/*", "builtin/templates/*/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+# E501: long prompt/help strings are fine; B008: Typer declares options as default values.
+ignore = ["E501", "B008"]

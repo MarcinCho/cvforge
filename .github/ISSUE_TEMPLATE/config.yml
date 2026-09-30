@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://github.com/MarcinCho/cvforge/tree/main/docs
+    about: Installation, configuration, templates and the HTTP API.
+  - name: Questions and ideas
+    url: https://github.com/MarcinCho/cvforge/discussions
+    about: Ask how to do something or share an idea before it becomes a feature request.
+  - name: Report a security vulnerability
+    url: https://github.com/MarcinCho/cvforge/security/advisories/new
+    about: Please report security problems privately, not as a public issue.
